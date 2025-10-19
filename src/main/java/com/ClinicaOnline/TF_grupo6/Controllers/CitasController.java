@@ -2,7 +2,6 @@ package com.ClinicaOnline.TF_grupo6.Controllers;
 
 import com.ClinicaOnline.TF_grupo6.Entitys.Citas;
 import com.ClinicaOnline.TF_grupo6.Entitys.Medicos;
-import com.ClinicaOnline.TF_grupo6.Repositorys.CitasRepository;
 import com.ClinicaOnline.TF_grupo6.Repositorys.MedicosRepository;
 import com.ClinicaOnline.TF_grupo6.Services.CitasService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +34,7 @@ public class CitasController {
 
     @PostMapping("/guardar")
     public String guardarCita(@ModelAttribute("cita") Citas cita,
-                              @RequestParam("medico") Long medicoId,
-                              Model model) {
+                              @RequestParam("medico") Long medicoId) {
 
         // Buscar el médico por id
         Medicos medico = medicosRepository.findById(medicoId)
@@ -45,8 +43,8 @@ public class CitasController {
         // Asignar el médico a la cita
         cita.setMedico(medico);
 
-        // Guardar cita (paciente se guarda por cascade)
-        citasService.guardar(cita);
+        // Guardar y notificar
+        citasService.guardarCitaYNotificar(cita);
 
         return "redirect:/citas";
     }
