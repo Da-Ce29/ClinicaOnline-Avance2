@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva Cita</title>
+</head>
+<body>
+<h1>Registrar Nueva Cita</h1>
+
+<form th:action="@{/citas/guardar}" th:object="${cita}" method="post">
+
+    <!-- ID oculto (por si editas una cita existente) -->
+    <input type="hidden" th:field="*{id}" id="id"/>
+
+    <!-- Seleccionar médico -->
+    <label for="medico">Médico:</label>
+    <select name="medico" id="medico" required>
+        <option value="">-- Seleccione un médico --</option>
+        <option th:each="medico : ${medicos}"
+                th:value="${medico.id}"
+                th:text="${medico.nombre}">Medico</option>
+    </select>
+    <br/><br/>
+
+    <!-- Registrar paciente -->
+    <label for="pacienteNombre">Nombre del paciente:</label>
+    <input type="text" th:field="*{paciente.nombre}" id="pacienteNombre" placeholder="Ej: Juan Pérez" required />
+    <br/><br/>
+
+    <label for="pacienteCorreo">Correo del paciente:</label>
+    <input type="email" th:field="*{paciente.correo}" id="pacienteCorreo" placeholder="Ej: juan@gmail.com" required />
+    <br/><br/>
+
+    <label for="pacienteTelefono">Teléfono del paciente:</label>
+    <input type="text" th:field="*{paciente.telefono}" id="pacienteTelefono" placeholder="Ej: 987654321" required />
+    <br/><br/>
+
+    <!-- Fecha -->
+    <label for="fecha">Fecha:</label>
+    <input type="date" th:field="*{fecha}" id="fecha" required />
+    <br/><br/>
+
+    <button type="submit">Guardar Cita</button>
+</form>
+
+<br/>
+<a href="/citas">Volver a la lista</a>
+</body>
+</html>

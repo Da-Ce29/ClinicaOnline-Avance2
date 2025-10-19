@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Citas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        a, button {
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+            padding: 8px 14px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        a:hover, button:hover {
+            background-color: #45a049;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        .top-buttons {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Lista de Citas Registradas</h1>
+
+<div class="top-buttons">
+    <a href="/citas/nueva">➕ Agregar Nueva Cita</a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Médico</th>
+        <th>Paciente</th>
+        <th>Correo</th>
+        <th>Teléfono</th>
+        <th>Fecha</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cita : ${citas}">
+        <td th:text="${cita.id}">1</td>
+        <td th:text="${cita.medico.nombre}">Dr. Pérez</td>
+        <td th:text="${cita.paciente.nombre}">Juan Pérez</td>
+        <td th:text="${cita.paciente.correo}">juan@gmail.com</td>
+        <td th:text="${cita.paciente.telefono}">987654321</td>
+        <td th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">15/06/2026</td>
+        <td th:text="${cita.estado}">Pendiente</td>
+        <td>
+            <a th:href="@{'/citas/eliminar/' + ${cita.id}}" class="delete-btn"
+               onclick="return confirm('¿Seguro que deseas eliminar esta cita?');">Eliminar</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
