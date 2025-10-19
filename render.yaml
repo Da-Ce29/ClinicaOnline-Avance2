@@ -1,15 +1,15 @@
 services:
   - type: web
-    name: clinicaonline
+    name: ClinicaOnline-avance2DB
     env: java
     plan: free
     buildCommand: "./mvnw clean install -DskipTests"
     startCommand: "java -jar target/*.jar"
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://dpg-d3q8kpbipnbc73acfl60-a:5432/clinicaonline_avance2db
+        value: jdbc:postgresql://dpg-d3q8kpbipnbc73acfl60-a:5432/ClinicaOnline-avance2DB_avance2db
       - key: SPRING_DATASOURCE_USERNAME
-        value: clinicaonline_avance2db_user
+        value: ClinicaOnline-avance2DB_avance2db_user
       - key: SPRING_DATASOURCE_PASSWORD
         value: SitOOHXsQxfVxS68nWQLKEkrgaPHmswL
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
