@@ -4,7 +4,7 @@ FROM maven:3.9.3-eclipse-temurin-8 AS build
 WORKDIR /app
 
 # Copiar archivos de proyecto
-COPY pom.xml .
+COPY pom.xml . 
 COPY src ./src
 
 # Ejecutar build sin tests
@@ -21,5 +21,8 @@ COPY --from=build /app/target/*.jar app.jar
 # Puerto de la aplicación
 EXPOSE 8080
 
+# Configurar memoria JVM para Render
+ENV JAVA_OPTS="-Xmx384m -Xms128m"
+
 # Comando para ejecutar la app
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
