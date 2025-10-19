@@ -1,13 +1,10 @@
 services:
   - type: web
     name: clinicaonline
-    env: java
+    env: docker
     plan: free
-    buildCommand: "./mvnw clean install -DskipTests"
-    startCommand: "java -jar target/*.jar"
+    dockerfilePath: ./Dockerfile
     envVars:
-      - key: JAVA_VERSION
-        value: 1.8
       - key: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://dpg-d3q8kpbipnbc73acfl60-a:5432/clinicaonline_avance2db
       - key: SPRING_DATASOURCE_USERNAME
