@@ -1,5 +1,5 @@
 # Etapa 1: Build
-FROM maven:3.8.7-openjdk-8 AS build
+FROM maven:3.9.3-eclipse-temurin-8 AS build
 
 WORKDIR /app
 
