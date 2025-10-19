@@ -1,24 +1,26 @@
 # Etapa 1: Build
-FROM maven:3.9.3-eclipse-temurin-8 AS build
+FROM maven:3.8.8-openjdk-8 AS build
 
+# Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar archivos de proyecto
-COPY pom.xml . 
+# Copiar archivos de Maven y proyecto
+COPY pom.xml .
 COPY src ./src
 
-# Ejecutar build sin tests
+# Limpiar y compilar el proyecto sin tests
 RUN mvn clean package -DskipTests
 
 # Etapa 2: Runtime
 FROM openjdk:8-jdk-alpine
 
+# Directorio de trabajo
 WORKDIR /app
 
-# Copiar el jar construido
+# Copiar el jar compilado desde la etapa build
 COPY --from=build /app/target/*.jar app.jar
 
-# Puerto de la aplicación
+# Puerto que expondrá la app
 EXPOSE 8080
 
 # Configurar memoria JVM para Render
