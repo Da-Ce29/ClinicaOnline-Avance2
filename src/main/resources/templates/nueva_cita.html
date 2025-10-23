@@ -1,15 +1,79 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Nueva Cita</title>
+    <title>Registrar Nueva Cita</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #0f172a;
+        }
+
+        form {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            max-width: 480px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 16px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #475569;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+
 <h1>Registrar Nueva Cita</h1>
 
-<form th:action="@{/citas/guardar}" th:object="${cita}" method="post">
+<!-- ⚙️ El método POST envía los datos al controlador -->
+<form th:action="@{/citas/guardar}" th:object="${cita}" method="post" autocomplete="off">
 
-    <!-- ID oculto (por si editas una cita existente) -->
+    <!-- ID oculto (para ediciones si las hubiera) -->
     <input type="hidden" th:field="*{id}" id="id"/>
 
     <!-- Seleccionar médico -->
@@ -18,32 +82,36 @@
         <option value="">-- Seleccione un médico --</option>
         <option th:each="medico : ${medicos}"
                 th:value="${medico.id}"
-                th:text="${medico.nombre}">Medico</option>
+                th:text="${medico.nombre}"></option>
     </select>
-    <br/><br/>
 
-    <!-- Registrar paciente -->
+    <!-- Datos del paciente -->
     <label for="pacienteNombre">Nombre del paciente:</label>
     <input type="text" th:field="*{paciente.nombre}" id="pacienteNombre" placeholder="Ej: Juan Pérez" required />
-    <br/><br/>
 
     <label for="pacienteCorreo">Correo del paciente:</label>
     <input type="email" th:field="*{paciente.correo}" id="pacienteCorreo" placeholder="Ej: juan@gmail.com" required />
-    <br/><br/>
 
     <label for="pacienteTelefono">Teléfono del paciente:</label>
     <input type="text" th:field="*{paciente.telefono}" id="pacienteTelefono" placeholder="Ej: 987654321" required />
-    <br/><br/>
 
     <!-- Fecha -->
     <label for="fecha">Fecha:</label>
     <input type="date" th:field="*{fecha}" id="fecha" required />
-    <br/><br/>
 
     <button type="submit">Guardar Cita</button>
 </form>
 
-<br/>
-<a href="/citas">Volver a la lista</a>
+<!-- 🔄 Enlace de retorno -->
+<a href="/citas">← Volver a la lista</a>
+
+<!-- ✅ Evita reenviar formulario si el usuario recarga -->
+<script>
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+</script>
+
 </body>
 </html>
+
