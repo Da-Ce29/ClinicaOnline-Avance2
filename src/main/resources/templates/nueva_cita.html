@@ -70,7 +70,7 @@
 
 <h1>Registrar Nueva Cita</h1>
 
-<!-- ⚙️ El método POST envía los datos al controlador -->
+<!-- El método POST envía los datos al controlador -->
 <form th:action="@{/citas/guardar}" th:object="${cita}" method="post" autocomplete="off">
 
     <!-- ID oculto (para ediciones si las hubiera) -->
@@ -102,10 +102,10 @@
     <button type="submit">Guardar Cita</button>
 </form>
 
-<!-- 🔄 Enlace de retorno -->
+<!-- Enlace de retorno -->
 <a href="/citas">← Volver a la lista</a>
 
-<!-- ✅ Evita reenviar formulario si el usuario recarga -->
+<!-- Evita reenviar formulario si el usuario recarga -->
 <script>
     if (window.history.replaceState) {
         window.history.replaceState(null, null, window.location.href);
