@@ -19,12 +19,14 @@ public class CitasController {
     @Autowired
     private MedicosRepository medicosRepository;
 
+    // Lista todas las citas
     @GetMapping
     public String listarCitas(Model model) {
         model.addAttribute("citas", citasService.listarTodas());
         return "lista_citas";
     }
 
+    // Muestra el formulario de nueva cita
     @GetMapping("/nueva")
     public String mostrarFormularioNuevaCita(Model model) {
         model.addAttribute("cita", new Citas());
@@ -32,6 +34,14 @@ public class CitasController {
         return "nueva_cita";
     }
 
+    // por GET a /citas/guardar (recarga o error),
+    // lo redirigimos al formulario en lugar de mostrar error 405
+    @GetMapping("/guardar")
+    public String redirigirDesdeGet() {
+        return "redirect:/citas/nueva";
+    }
+
+    // Guarda una cita (POST real)
     @PostMapping("/guardar")
     public String guardarCita(@ModelAttribute("cita") Citas cita,
                               @RequestParam("medico") Long medicoId) {
@@ -46,12 +56,15 @@ public class CitasController {
         // Guardar y notificar
         citasService.guardarCitaYNotificar(cita);
 
+        // Redirige a la lista después de guardar
         return "redirect:/citas";
     }
 
+    // Eliminar cita por ID
     @GetMapping("/eliminar/{id}")
     public String eliminarCita(@PathVariable Long id) {
         citasService.eliminar(id);
         return "redirect:/citas";
     }
 }
+
