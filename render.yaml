@@ -5,13 +5,36 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     envVars:
+      # === Conexión a base de datos Supabase (Session Pooler) ===
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://dpg-d3q8kpbipnbc73acfl60-a:5432/clinicaonline_avance2db
+        value: jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require
       - key: SPRING_DATASOURCE_USERNAME
-        value: clinicaonline_avance2db_user
+        value: postgres.svyjkqhehlcblhukyjqi
       - key: SPRING_DATASOURCE_PASSWORD
-        value: SitOOHXsQxfVxS68nWQLKEkrgaPHmswL
+        value: Jb2q*3UBQ-GHRjg
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
+      - key: SPRING_JPA_SHOW_SQL
+        value: "true"
+      - key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+        value: "5"
+
+      # === Configuración de correo (Gmail SMTP o tu servidor) ===
+      - key: SPRING_MAIL_HOST
+        value: smtp.gmail.com
+      - key: SPRING_MAIL_PORT
+        value: "587"
+      - key: SPRING_MAIL_USERNAME
+        value: davidechg2965@gmail.com
+      - key: SPRING_MAIL_PASSWORD
+        value: yzcbpfwpymwhggcw
+      - key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH
+        value: "true"
+      - key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE
+        value: "true"
+
+      # === Ajustes generales de Spring Boot ===
+      - key: SERVER_PORT
+        value: "8080"
       - key: JAVA_OPTS
         value: "-Xmx384m -Xms128m"
