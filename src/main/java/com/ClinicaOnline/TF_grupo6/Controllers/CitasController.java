@@ -29,9 +29,11 @@ public class CitasController {
     // Muestra el formulario de nueva cita
     @GetMapping("/nueva")
     public String mostrarFormularioNuevaCita(Model model) {
-        model.addAttribute("cita", new Citas());
-        model.addAttribute("medicos", medicosRepository.findAll());
-        return "nueva_cita";
+    Citas nuevaCita = new Citas();
+    nuevaCita.setPaciente(new Pacientes()); // para binding
+    model.addAttribute("cita", nuevaCita);
+    model.addAttribute("medicos", medicosRepository.findAll());
+    return "nueva_cita";
     }
 
     // por GET a /citas/guardar (recarga o error),
@@ -43,22 +45,25 @@ public class CitasController {
 
     // Guarda una cita (POST real)
     @PostMapping("/guardar")
-    public String guardarCita(@ModelAttribute("cita") Citas cita,
-                              @RequestParam("medico") Long medicoId) {
-
-        // Buscar el médico por id
+    public String guardarCita(@ModelAttribute("cita") Citas cita, @RequestParam("medico") Long medicoId) {
+    try {
         Medicos medico = medicosRepository.findById(medicoId)
                 .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
 
-        // Asignar el médico a la cita
         cita.setMedico(medico);
 
-        // Guardar y notificar
-        citasService.guardarCitaYNotificar(cita);
+        // Validaciones mínimas
+        if (cita.getPaciente() == null || cita.getPaciente().getCorreo() == null || cita.getPaciente().getCorreo().isEmpty()) {
+            return "redirect:/citas?nopaciente";
+        }
 
-        // Redirige a la lista después de guardar
-        return "redirect:/citas";
+        citasService.guardarCitaYNotificar(cita);
+        return "redirect:/citas?exito";
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "redirect:/citas?error";
     }
+}
 
     // Eliminar cita por ID
     @GetMapping("/eliminar/{id}")
