@@ -30,7 +30,7 @@ public class CitasController {
     @GetMapping("/nueva")
     public String mostrarFormularioNuevaCita(Model model) {
     Citas nuevaCita = new Citas();
-    nuevaCita.setPaciente(new Paciente()); // para binding
+    nuevaCita.setPaciente(new Pacientes()); // para binding
     model.addAttribute("cita", nuevaCita);
     model.addAttribute("medicos", medicosRepository.findAll());
     return "nueva_cita";
@@ -53,7 +53,7 @@ public class CitasController {
 
         // EVITA NullPointer
         if (cita.getPaciente() == null) {
-            cita.setPaciente(new Paciente());
+            cita.setPaciente(new Pacientes());
         }
 
         // Validaciones
