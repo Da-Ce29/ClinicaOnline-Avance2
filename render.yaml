@@ -5,28 +5,41 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     envVars:
-      # === Conexión a base de datos Supabase (Session Pooler) ===
+      # === Base de datos Supabase ===
       - key: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
       - key: SPRING_DATASOURCE_USERNAME
         value: postgres.svyjkqhehlcblhukyjqi
       - key: SPRING_DATASOURCE_PASSWORD
         value: Jb2q*3UBQ-GHRjg
+
+      # === JPA ===
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
       - key: SPRING_JPA_SHOW_SQL
         value: "true"
+
+      # === Hikari ===
       - key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
         value: "5"
 
-      # === Configuración de correo (Gmail SMTP o tu servidor) ===
+      # === MAIL CONFIG (OBLIGATORIO) ===
+      - key: SPRING_MAIL_HOST
+        value: smtp.gmail.com
+      - key: SPRING_MAIL_PORT
+        value: "587"
       - key: SPRING_MAIL_USERNAME
         value: davidechg2965@gmail.com
       - key: SPRING_MAIL_PASSWORD
         value: yzcbpfwpymwhggcw
+      - key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH
+        value: "true"
+      - key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE
+        value: "true"
 
-      # === Ajustes generales de Spring Boot ===
+      # === SERVER CONFIG ===
       - key: SERVER_PORT
         value: "8080"
       - key: JAVA_OPTS
         value: "-Xmx384m -Xms128m"
+
