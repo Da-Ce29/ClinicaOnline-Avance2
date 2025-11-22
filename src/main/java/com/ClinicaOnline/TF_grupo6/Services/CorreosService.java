@@ -18,6 +18,7 @@ public class CorreosService {
     @Value("${spring.mail.password}")
     private String contrasena;
 
+
     public void enviarCorreo(String destinatario, String asunto, String cuerpo, String imagenRuta) {
 
         Properties props = new Properties();
