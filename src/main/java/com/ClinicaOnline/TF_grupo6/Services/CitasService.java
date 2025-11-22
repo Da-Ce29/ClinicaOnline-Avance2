@@ -33,28 +33,35 @@ public class CitasService {
         citasRepository.deleteById(id);
     }
 
-    public void guardarCitaYNotificar(Citas cita) {
+   public void guardarCitaYNotificar(Citas cita) {
     // Guardar la cita en la base de datos
     citasRepository.save(cita);
 
-    // Validar que el paciente y su correo existan
-    if (cita.getPaciente() != null && cita.getPaciente().getCorreo() != null && !cita.getPaciente().getCorreo().isEmpty()) {
-        try {
-            String destinatario = cita.getPaciente().getCorreo();
-            String asunto = "Confirmación de cita médica";
-            String cuerpo = "Hola " + cita.getPaciente().getNombre() + ",<br>"
-                    + "Tu cita está confirmada para el día: " + cita.getFecha();
-            String imagen = "src/main/resources/static/logo_clinica.jpg";
-
-            correosService.enviarCorreo(destinatario, asunto, cuerpo, imagen);
-        } catch (Exception e) {
-            // loguear y continuar — no queremos que falle todo por un correo
-            System.err.println("⚠️ Error al enviar el correo: " + e.getMessage());
+    // Validar que el paciente y su correo existan antes de intentar enviar correo
+        if (cita.getPaciente() == null) {
+        System.err.println(" No se envio correo: paciente es null.");
+            return;
         }
-    } else {
-        System.err.println("⚠️ No se envió el correo: paciente o correo nulo.");
+        String correoPaciente = cita.getPaciente().getCorreo();
+        if (correoPaciente == null || correoPaciente.trim().isEmpty()) {
+        System.err.println("No se envio correo: email del paciente vacío.");
+            return;
+        }
+
+    String destinatario = correoPaciente;
+    String asunto = "Confirmación de cita médica";
+    String cuerpo = "Hola " + cita.getPaciente().getNombre() + ",<br>"+ "Tu cita está confirmada para el día: " + cita.getFecha();
+    String imagen = "src/main/resources/static/logo_clinica.jpg";
+
+        try {
+        correosService.enviarCorreo(destinatario, asunto, cuerpo, imagen);
+        } catch (Exception e) {
+        // No fatal — loguear y continuar
+        System.err.println(" Error al enviar el correo: " + e.getMessage());
+        e.printStackTrace();
+        }
     }
-}
+
 
 }
 
