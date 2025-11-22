@@ -1,5 +1,6 @@
 package com.ClinicaOnline.TF_grupo6.Services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
@@ -11,10 +12,14 @@ import java.util.Properties;
 @Service
 public class CorreosService {
 
-    private final String remitente = System.getenv("SPRING_MAIL_USERNAME");
-    private final String contrasena = System.getenv("SPRING_MAIL_PASSWORD");
+    @Value("${spring.mail.username}")
+    private String remitente;
+
+    @Value("${spring.mail.password}")
+    private String contrasena;
 
     public void enviarCorreo(String destinatario, String asunto, String cuerpo, String imagenRuta) {
+
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -33,18 +38,34 @@ public class CorreosService {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
             message.setSubject(asunto);
 
-            MimeBodyPart htmlParte = new MimeBodyPart();
-            htmlParte.setContent("<h3>" + cuerpo + "</h3>", "text/html");
+            String html = "<html><body>"
+                    + "<h3>" + cuerpo + "</h3>"
+                    + "<img src='cid:imagen_embebida' />"
+                    + "</body></html>";
 
-            MimeMultipart multipart = new MimeMultipart();
+            MimeBodyPart htmlParte = new MimeBodyPart();
+            htmlParte.setContent(html, "text/html");
+
+            Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(htmlParte);
 
+            if (imagenRuta != null) {
+                File imagen = new File(imagenRuta);
+                if (imagen.exists()) {
+                    MimeBodyPart imagenParte = new MimeBodyPart();
+                    imagenParte.attachFile(imagen);
+                    imagenParte.setContentID("<imagen_embebida>");
+                    imagenParte.setDisposition(MimeBodyPart.INLINE);
+                    multipart.addBodyPart(imagenParte);
+                }
+            }
+
             message.setContent(multipart);
-
             Transport.send(message);
-            System.out.println("Correo enviado correctamente!");
 
-        } catch (Exception e) {
+            System.out.println("Correo enviado a " + destinatario);
+
+        } catch (MessagingException | IOException e) {
             e.printStackTrace();
             System.out.println("Error enviando correo: " + e.getMessage());
         }
