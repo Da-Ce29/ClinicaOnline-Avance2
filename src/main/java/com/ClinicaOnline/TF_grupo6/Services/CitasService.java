@@ -34,19 +34,28 @@ public class CitasService {
     }
 
     public void guardarCitaYNotificar(Citas cita) {
-        // Guardar la cita en la base de datos
-        citasRepository.save(cita);
+    // Guardar la cita en la base de datos
+    citasRepository.save(cita);
 
-        // Preparar correo
-        String destinatario = cita.getPaciente().getCorreo();
-        String asunto = "Confirmación de cita médica";
-        String cuerpo = "Hola " + cita.getPaciente().getNombre() + ",<br>"
-                + "Tu cita está confirmada para el día: " + cita.getFecha();
-        String imagen = "src/main/resources/static/logo_clinica.jpg";
+    // Validar que el paciente y su correo existan
+    if (cita.getPaciente() != null && cita.getPaciente().getCorreo() != null && !cita.getPaciente().getCorreo().isEmpty()) {
+        try {
+            String destinatario = cita.getPaciente().getCorreo();
+            String asunto = "Confirmación de cita médica";
+            String cuerpo = "Hola " + cita.getPaciente().getNombre() + ",<br>"
+                    + "Tu cita está confirmada para el día: " + cita.getFecha();
+            String imagen = "src/main/resources/static/logo_clinica.jpg";
 
-        // Enviar correo
-        correosService.enviarCorreo(destinatario, asunto, cuerpo, imagen);
+            correosService.enviarCorreo(destinatario, asunto, cuerpo, imagen);
+        } catch (Exception e) {
+            // loguear y continuar — no queremos que falle todo por un correo
+            System.err.println("⚠️ Error al enviar el correo: " + e.getMessage());
+        }
+    } else {
+        System.err.println("⚠️ No se envió el correo: paciente o correo nulo.");
     }
+}
+
 }
 
 
