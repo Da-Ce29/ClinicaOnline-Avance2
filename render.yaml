@@ -20,18 +20,10 @@ services:
         value: "5"
 
       # === Configuración de correo (Gmail SMTP o tu servidor) ===
-      - key: SPRING_MAIL_HOST
-        value: smtp.gmail.com
-      - key: SPRING_MAIL_PORT
-        value: "587"
       - key: SPRING_MAIL_USERNAME
         value: davidechg2965@gmail.com
       - key: SPRING_MAIL_PASSWORD
         value: yzcbpfwpymwhggcw
-      - key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH
-        value: "true"
-      - key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE
-        value: "true"
 
       # === Ajustes generales de Spring Boot ===
       - key: SERVER_PORT
