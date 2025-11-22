@@ -1,5 +1,6 @@
 package com.ClinicaOnline.TF_grupo6.Controllers;
 
+import com.ClinicaOnline.TF_grupo6.Entitys.Pacientes;
 import com.ClinicaOnline.TF_grupo6.Entitys.Citas;
 import com.ClinicaOnline.TF_grupo6.Entitys.Medicos;
 import com.ClinicaOnline.TF_grupo6.Repositorys.MedicosRepository;
