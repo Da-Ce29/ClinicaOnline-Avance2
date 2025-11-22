@@ -9,11 +9,6 @@ import java.time.LocalDate;
 @Table(name = "citas")
 public class Citas {
 
-    
-    public Citas() {
-    this.paciente = new Pacientes(); // evita NullPointer al bind con Thymeleaf
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,6 +25,10 @@ public class Citas {
     private LocalDate fecha;
 
     private String estado = "Pendiente";
+
+    public Citas() {
+    this.paciente = new Pacientes(); // evita NullPointer al bind con Thymeleaf
+    }
 
     // Getters y Setters
     public Long getId() { return id; }
