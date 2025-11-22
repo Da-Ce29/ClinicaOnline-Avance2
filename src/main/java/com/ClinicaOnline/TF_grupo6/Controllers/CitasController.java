@@ -46,24 +46,30 @@ public class CitasController {
     // Guarda una cita (POST real)
     @PostMapping("/guardar")
     public String guardarCita(@ModelAttribute("cita") Citas cita, @RequestParam("medico") Long medicoId) {
-    try {
-        Medicos medico = medicosRepository.findById(medicoId)
-                .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
+        try {
+        Medicos medico = medicosRepository.findById(medicoId).orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
 
         cita.setMedico(medico);
 
-        // Validaciones mínimas
-        if (cita.getPaciente() == null || cita.getPaciente().getCorreo() == null || cita.getPaciente().getCorreo().isEmpty()) {
+        // EVITA NullPointer
+        if (cita.getPaciente() == null) {
+            cita.setPaciente(new Pacientes());
+        }
+
+        // Validaciones
+        if (cita.getPaciente().getCorreo() == null || cita.getPaciente().getCorreo().isEmpty()) {
             return "redirect:/citas?nopaciente";
         }
 
         citasService.guardarCitaYNotificar(cita);
-        return "redirect:/citas?exito";
-    } catch (Exception e) {
+            return "redirect:/citas?exito";
+
+        } catch (Exception e) {
         e.printStackTrace();
-        return "redirect:/citas?error";
+            return "redirect:/citas?error";
+        }
     }
-}
+
 
     // Eliminar cita por ID
     @GetMapping("/eliminar/{id}")
