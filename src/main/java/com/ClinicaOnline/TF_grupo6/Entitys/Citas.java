@@ -9,10 +9,9 @@ import java.time.LocalDate;
 @Table(name = "citas")
 public class Citas {
 
-    // dentro de la clase Citas, antes de los getters/setters
+    
     public Citas() {
     this.paciente = new Pacientes(); // evita NullPointer al bind con Thymeleaf
-    // opcional: this.medico = new Medicos();
     }
 
     @Id
