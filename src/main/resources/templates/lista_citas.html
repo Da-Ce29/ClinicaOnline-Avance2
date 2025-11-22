@@ -81,7 +81,7 @@
         <td th:text="${cita.paciente.nombre}">Juan Pérez</td>
         <td th:text="${cita.paciente.correo}">juan@gmail.com</td>
         <td th:text="${cita.paciente.telefono}">987654321</td>
-        <td th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">15/06/2026</td>
+        <td th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}"></td>
         <td th:text="${cita.estado}">Pendiente</td>
         <td>
             <a th:href="@{'/citas/eliminar/' + ${cita.id}}" class="delete-btn"
