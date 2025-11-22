@@ -11,8 +11,8 @@ import java.util.Properties;
 @Service
 public class CorreosService {
 
-    private final String remitente = System.getenv("CORREO_REMITENTE");
-    private final String contrasena = System.getenv("CONTRASENA_APP");
+    private final String remitente = System.getenv("SPRING_MAIL_USERNAME");
+    private final String contrasena = System.getenv("SPRING_MAIL_PASSWORD");
 
     public void enviarCorreo(String destinatario, String asunto, String cuerpo, String imagenRuta) {
         Properties props = new Properties();
@@ -33,34 +33,20 @@ public class CorreosService {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
             message.setSubject(asunto);
 
-            String html = "<html><body>"
-                    + "<h3>" + cuerpo + "</h3>"
-                    + "<img src='cid:imagen_embebida'>"
-                    + "</body></html>";
-
             MimeBodyPart htmlParte = new MimeBodyPart();
-            htmlParte.setContent(html, "text/html");
+            htmlParte.setContent("<h3>" + cuerpo + "</h3>", "text/html");
 
-            File imagen = new File(imagenRuta);
-            MimeBodyPart imagenParte = new MimeBodyPart();
-            if (imagen.exists()) {
-                imagenParte.attachFile(imagen);
-                imagenParte.setContentID("<imagen_embebida>");
-                imagenParte.setDisposition(MimeBodyPart.INLINE);
-            }
-
-            Multipart multipart = new MimeMultipart();
+            MimeMultipart multipart = new MimeMultipart();
             multipart.addBodyPart(htmlParte);
-            if (imagen.exists()) multipart.addBodyPart(imagenParte);
 
             message.setContent(multipart);
 
             Transport.send(message);
-            System.out.println("Correo enviado con éxito a " + destinatario);
+            System.out.println("Correo enviado correctamente!");
 
-        } catch (MessagingException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error al enviar el correo a " + destinatario);
+            System.out.println("Error enviando correo: " + e.getMessage());
         }
     }
 }
