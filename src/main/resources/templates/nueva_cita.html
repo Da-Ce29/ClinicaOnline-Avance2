@@ -78,9 +78,9 @@
 
     <!-- Seleccionar médico -->
     <label for="medico">Médico:</label>
-    <select th:field="*{medico}" id="medico" required>
-    <option value="">-- Seleccione un médico --</option>
-    <option th:each="medico : ${medicos}" th:value="${medico.id}" th:text="${medico.nombre}"></option>
+    <select name="medico" id="medico" required>
+        <option value="">-- Seleccione un médico --</option>
+        <option th:each="medico : ${medicos}" th:value="${medico.id}" th:text="${medico.nombre}"></option>
     </select>
 
     <!-- Datos del paciente -->
@@ -112,4 +112,3 @@
 
 </body>
 </html>
-
