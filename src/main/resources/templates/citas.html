@@ -22,8 +22,7 @@
     <td th:text="${cita.paciente.nombre}"></td>
     <td th:text="${cita.fecha}"></td>
     <td>
-        <a th:href="@{'/citas/editar/' + ${cita.id}}">Editar</a> |
-        <a th:href="@{'/citas/eliminar/' + ${cita.id}}">Eliminar</a>
+        <a th:href="@{'/citas/editar/' + ${cita.id}}">Editar</a> | <a th:href="@{'/citas/eliminar/' + ${cita.id}}">Eliminar</a>
     </td>
 </tr>
 </table>
