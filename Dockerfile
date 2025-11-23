@@ -9,7 +9,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Ejecutar build sin tests
-RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
 
 # Etapa 2: Runtime
 FROM eclipse-temurin:8-jdk
