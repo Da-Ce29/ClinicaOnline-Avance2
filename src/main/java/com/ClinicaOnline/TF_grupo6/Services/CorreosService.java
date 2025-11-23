@@ -21,7 +21,7 @@ public class CorreosService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public void enviarCorreo(String destinatario, String asunto, String cuerpo, String imagenRuta) {
+    public void enviarCorreo(String destinatario, String asunto, String cuerpo) {
         try {
             String url = "https://api.postmarkapp.com/email";
 
@@ -37,9 +37,8 @@ public class CorreosService {
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
 
-            restTemplate.postForEntity(url, request, String.class);
-
-            System.out.println("Correo enviado a " + destinatario);
+            var response = restTemplate.postForEntity(url, request, String.class);
+            System.out.println("Correo enviado a " + destinatario + ", status: " + response.getStatusCode());
 
         } catch (Exception e) {
             e.printStackTrace();
