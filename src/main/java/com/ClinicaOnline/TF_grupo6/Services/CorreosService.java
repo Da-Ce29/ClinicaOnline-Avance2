@@ -1,72 +1,47 @@
 package com.ClinicaOnline.TF_grupo6.Services;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import javax.mail.*;
-import javax.mail.internet.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class CorreosService {
 
-    @Value("${spring.mail.username}")
-    private String remitente;
+    @Value("${postmark.api.key}")
+    private String apiKey;
 
-    @Value("${spring.mail.password}")
-    private String contrasena;
+    @Value("${postmark.from.email}")
+    private String fromEmail;
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public void enviarCorreo(String destinatario, String asunto, String cuerpo, String imagenRuta) {
-
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(remitente, contrasena);
-            }
-        });
-
         try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(remitente));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
-            message.setSubject(asunto);
+            String url = "https://api.postmarkapp.com/email";
 
-            String html = "<html><body>"
-                    + "<h3>" + cuerpo + "</h3>"
-                    + (imagenRuta != null ? "<img src='cid:imagen_embebida' />" : "")
-                    + "</body></html>";
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("From", fromEmail);
+            payload.put("To", destinatario);
+            payload.put("Subject", asunto);
+            payload.put("HtmlBody", cuerpo);
 
-            MimeBodyPart htmlParte = new MimeBodyPart();
-            htmlParte.setContent(html, "text/html");
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-Postmark-Server-Token", apiKey);
 
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(htmlParte);
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
 
-            // Adjuntar imagen si existe
-            if (imagenRuta != null) {
-                File imagen = new File(imagenRuta);
-                if (imagen.exists()) {
-                    MimeBodyPart imagenParte = new MimeBodyPart();
-                    imagenParte.attachFile(imagen);
-                    imagenParte.setContentID("<imagen_embebida>");
-                    imagenParte.setDisposition(MimeBodyPart.INLINE);
-                    multipart.addBodyPart(imagenParte);
-                }
-            }
-
-            message.setContent(multipart);
-            Transport.send(message);
+            restTemplate.postForEntity(url, request, String.class);
 
             System.out.println("Correo enviado a " + destinatario);
 
-        } catch (MessagingException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error enviando correo: " + e.getMessage());
         }
