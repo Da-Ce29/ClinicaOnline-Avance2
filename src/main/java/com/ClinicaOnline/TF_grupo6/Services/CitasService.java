@@ -1,6 +1,7 @@
 package com.ClinicaOnline.TF_grupo6.Services;
 
 import com.ClinicaOnline.TF_grupo6.Entitys.Citas;
+import com.ClinicaOnline.TF_grupo6.Repositorys.PacientesRepository;
 import com.ClinicaOnline.TF_grupo6.Repositorys.CitasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
