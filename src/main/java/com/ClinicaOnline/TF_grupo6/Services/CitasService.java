@@ -37,7 +37,7 @@ public class CitasService {
             String asunto = "Confirmación de cita médica";
             String cuerpo = "Su cita ha sido registrada para el día: " + cita.getFecha();
 
-            correosService.enviarCorreo(destinatario, asunto, cuerpo, null);
+            correosService.enviarCorreo(destinatario, asunto, cuerpo);
 
             System.out.println("Correo enviado correctamente a: " + destinatario);
 
