@@ -5,30 +5,12 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     envVars:
-      - key: SPRING_DATASOURCE_URL
-        value: "jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require"
-
-      - key: SPRING_DATASOURCE_USERNAME
-        value: "postgres.svyjkqhehlcblhukyjqi"
-
-      - key: SPRING_DATASOURCE_PASSWORD
-        value: "Jb2q*3UBQ-GHRjg"
-
-      - key: SPRING_JPA_SHOW_SQL
-        value: "true"
-
-      # IMPORTANTE: ddl-auto=none para POOLER
-      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
-        value: "none"
-
-      - key: POSTMARK_API_KEY
-        value: "828579bb-0140-4f19-b6db-882de45ac8f4"
-
-      - key: POSTMARK_FROM_EMAIL
-        value: "david.chavezgu@usil.pe"
-
-      - key: PORT
-        value: "8080"
-
-      - key: JAVA_OPTS
-        value: "-Xmx384m -Xms128m"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require"
+      SPRING_DATASOURCE_USERNAME: "postgres.svyjkqhehlcblhukyjqi"
+      SPRING_DATASOURCE_PASSWORD: "Jb2q*3UBQ-GHRjg"
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "none"
+      POSTMARK_API_KEY: "828579bb-0140-4f19-b6db-882de45ac8f4"
+      POSTMARK_FROM_EMAIL: "david.chavezgu@usil.pe"
+      PORT: "8080"
+      JAVA_OPTS: "-Xmx384m -Xms128m"
