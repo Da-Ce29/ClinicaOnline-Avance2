@@ -20,63 +20,64 @@ public class CitasController {
     @Autowired
     private MedicosRepository medicosRepository;
 
-    // Lista todas las citas
+    // LISTAR TODAS LAS CITAS
     @GetMapping
     public String listarCitas(Model model) {
         model.addAttribute("citas", citasService.listarTodas());
         return "lista_citas";
     }
 
-    // Muestra el formulario de nueva cita
+    // FORMULARIO NUEVA CITA
     @GetMapping("/nueva")
     public String mostrarFormularioNuevaCita(Model model) {
-    Citas nuevaCita = new Citas();
-    nuevaCita.setPaciente(new Pacientes()); // para binding
-    model.addAttribute("cita", nuevaCita);
-    model.addAttribute("medicos", medicosRepository.findAll());
-    return "nueva_cita";
+        Citas nuevaCita = new Citas();
+        nuevaCita.setPaciente(new Pacientes()); // evita NullPointer
+        model.addAttribute("cita", nuevaCita);
+        model.addAttribute("medicos", medicosRepository.findAll());
+        return "nueva_cita";
     }
 
-    // por GET a /citas/guardar (recarga o error),
-    // lo redirigimos al formulario en lugar de mostrar error 405
+    // PREVENIR ERROR DE GET /guardar
     @GetMapping("/guardar")
     public String redirigirDesdeGet() {
         return "redirect:/citas/nueva";
     }
 
-    // Guarda una cita (POST real)
+    // GUARDAR CITA
     @PostMapping("/guardar")
-    public String guardarCita(@ModelAttribute("cita") Citas cita, @RequestParam("medico") Long medicoId) {
+    public String guardarCita(
+            @ModelAttribute("cita") Citas cita,
+            @RequestParam("medico") Long medicoId
+    ) {
         try {
-        Medicos medico = medicosRepository.findById(medicoId).orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
+            Medicos medico = medicosRepository.findById(medicoId)
+                    .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
 
-        cita.setMedico(medico);
+            cita.setMedico(medico);
 
-        // EVITA NullPointer
-        if (cita.getPaciente() == null) {
-            cita.setPaciente(new Pacientes());
-        }
+            // evitar NullPointer
+            if (cita.getPaciente() == null) {
+                cita.setPaciente(new Pacientes());
+            }
 
-        // Validaciones
-        if (cita.getPaciente().getCorreo() == null || cita.getPaciente().getCorreo().isEmpty()) {
-            return "redirect:/citas?nopaciente";
-        }
+            if (cita.getPaciente().getCorreo() == null ||
+                cita.getPaciente().getCorreo().isEmpty()) {
+                return "redirect:/citas?nopaciente";
+            }
 
-        citasService.guardarCitaYNotificar(cita);
+            citasService.guardarCitaYNotificar(cita);
             return "redirect:/citas?exito";
 
         } catch (Exception e) {
-        e.printStackTrace();
+            e.printStackTrace();
             return "redirect:/citas?error";
         }
     }
 
-
-    // Eliminar cita por ID
+    // ELIMINAR CITA
     @GetMapping("/eliminar/{id}")
     public String eliminarCita(@PathVariable Long id) {
         citasService.eliminar(id);
         return "redirect:/citas";
     }
 }
-
