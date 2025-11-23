@@ -27,4 +27,5 @@ EXPOSE 8080
 ENV JAVA_OPTS="-Xmx384m -Xms128m"
 
 # Comando para ejecutar la aplicación
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dspring.datasource.url=$SPRING_DATASOURCE_URL \ -Dspring.datasource.username=$SPRING_DATASOURCE_USERNAME \ -Dspring.datasource.password=$SPRING_DATASOURCE_PASSWORD \ -Dspring.mail.username=$SPRING_MAIL_USERNAME \-Dspring.mail.password=$SPRING_MAIL_PASSWORD \ $JAVA_OPTS -jar app.jar"]
+
