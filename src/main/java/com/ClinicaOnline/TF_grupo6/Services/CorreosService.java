@@ -1,72 +1,55 @@
 package com.ClinicaOnline.TF_grupo6.Services;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
 
 @Service
 public class CorreosService {
 
-    @Value("${spring.mail.username}")
-    private String remitente;
-
-    @Value("${spring.mail.password}")
-    private String contrasena;
-
+    @Autowired
+    private JavaMailSender mailSender;
 
     public void enviarCorreo(String destinatario, String asunto, String cuerpo, String imagenRuta) {
 
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(remitente, contrasena);
-            }
-        });
-
         try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(remitente));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
-            message.setSubject(asunto);
+            MimeMessage mensaje = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+
+            helper.setTo(destinatario);
+            helper.setSubject(asunto);
 
             String html = "<html><body>"
-                    + "<h3>" + cuerpo + "</h3>"
-                    + "<img src='cid:imagen_embebida' />"
-                    + "</body></html>";
-
-            MimeBodyPart htmlParte = new MimeBodyPart();
-            htmlParte.setContent(html, "text/html");
-
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(htmlParte);
+                    + "<h3>" + cuerpo + "</h3>";
 
             if (imagenRuta != null) {
-                File imagen = new File(imagenRuta);
-                if (imagen.exists()) {
-                    MimeBodyPart imagenParte = new MimeBodyPart();
-                    imagenParte.attachFile(imagen);
-                    imagenParte.setContentID("<imagen_embebida>");
-                    imagenParte.setDisposition(MimeBodyPart.INLINE);
-                    multipart.addBodyPart(imagenParte);
+                html += "<img src='cid:imagen_embebida'>";
+            }
+
+            html += "</body></html>";
+
+            helper.setText(html, true);
+
+            if (imagenRuta != null) {
+                FileSystemResource img = new FileSystemResource(new File(imagenRuta));
+                if (img.exists()) {
+                    helper.addInline("imagen_embebida", img);
                 }
             }
 
-            message.setContent(multipart);
-            Transport.send(message);
+            helper.setFrom(System.getenv("SPRING_MAIL_USERNAME"));
 
-            System.out.println("Correo enviado a " + destinatario);
+            mailSender.send(mensaje);
 
-        } catch (MessagingException | IOException e) {
+            System.out.println("Correo enviado correctamente a " + destinatario);
+
+        } catch (MessagingException e) {
             e.printStackTrace();
             System.out.println("Error enviando correo: " + e.getMessage());
         }
