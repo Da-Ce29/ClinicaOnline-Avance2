@@ -25,10 +25,27 @@ public class CitasService {
 
     // Guardar cita y enviar correo
     public void guardarCitaYNotificar(Citas cita) {
-    // Guardar paciente primero si es nuevo
-    if (cita.getPaciente().getId() == null) {
-        pacientesRepository.save(cita.getPaciente());
+
+    Pacientes p = cita.getPaciente();
+
+    // Si el paciente no tiene ID, se crea uno nuevo
+    if (p.getId() == null) {
+        pacientesRepository.save(p);
+    } else {
+        // Si viene con ID (editar o reusar), cargarlo de la BD
+        p = pacientesRepository.findById(p.getId())
+            .orElseThrow(() ->
+                new IllegalArgumentException("Paciente no encontrado")
+            );
+        cita.setPaciente(p);
     }
+
+    // Guardar la cita
+    citasRepository.save(cita);
+
+    // Enviar correo
+    enviarCorreoConfirmacion(cita);
+}
 
     // Guardar la cita
     citasRepository.save(cita);
