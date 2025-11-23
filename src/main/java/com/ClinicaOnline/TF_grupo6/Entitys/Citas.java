@@ -13,11 +13,11 @@ public class Citas {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "medico_id")
+    @JoinColumn(name = "medico_id", nullable = false)
     private Medicos medico;
 
     @ManyToOne
-    @JoinColumn(name = "paciente_id")
+    @JoinColumn(name = "paciente_id", nullable = false)
     private Pacientes paciente;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -30,8 +30,7 @@ public class Citas {
         this.paciente = new Pacientes();
     }
 
-    // GETTERS Y SETTERS
-
+    // --- Getters y Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
