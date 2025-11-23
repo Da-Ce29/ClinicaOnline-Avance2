@@ -25,10 +25,8 @@ public class Citas {
 
     private String estado = "Pendiente";
 
-    public Citas() {
-        // evita NullPointer al hacer binding desde Thymeleaf
-        this.paciente = new Pacientes();
-    }
+    public Citas() {}
+
 
     // --- Getters y Setters ---
     public Long getId() { return id; }
