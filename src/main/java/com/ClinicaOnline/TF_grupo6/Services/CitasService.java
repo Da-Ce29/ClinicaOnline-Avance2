@@ -14,6 +14,9 @@ public class CitasService {
     @Autowired
     private CorreosService correosService;
 
+    @Autowired
+    private PacientesRepository pacientesRepository;
+    
     // Listar todas
     public Iterable<Citas> listarTodas() {
         return citasRepository.findAll();
@@ -21,8 +24,16 @@ public class CitasService {
 
     // Guardar cita y enviar correo
     public void guardarCitaYNotificar(Citas cita) {
-        citasRepository.save(cita);
-        enviarCorreoConfirmacion(cita);
+    // Guardar paciente primero si es nuevo
+    if (cita.getPaciente().getId() == null) {
+        pacientesRepository.save(cita.getPaciente());
+    }
+
+    // Guardar la cita
+    citasRepository.save(cita);
+
+    // Enviar correo
+    enviarCorreoConfirmacion(cita);
     }
 
     // Eliminar
