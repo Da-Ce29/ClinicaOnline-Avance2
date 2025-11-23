@@ -16,7 +16,7 @@ public class Citas {
     @JoinColumn(name = "medico_id")
     private Medicos medico;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "paciente_id")
     private Pacientes paciente;
 
