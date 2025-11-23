@@ -14,54 +14,36 @@ public class CitasService {
     @Autowired
     private CorreosService correosService;
 
-    // Listar todas las citas
+    // Listar todas
     public Iterable<Citas> listarTodas() {
         return citasRepository.findAll();
     }
 
-    // Guardar cita normal (sin correo)
-    public Citas guardar(Citas cita) {
-        return citasRepository.save(cita);
-    }
-
     // Guardar cita y enviar correo
     public void guardarCitaYNotificar(Citas cita) {
-        try {
-            // Guarda la cita primero
-            Citas citaGuardada = citasRepository.save(cita);
-
-            // Validaciones antes de enviar correo
-            if (citaGuardada.getPaciente() == null) {
-                System.out.println("ERROR: La cita no tiene paciente. No se envió correo.");
-                return;
-            }
-
-            if (citaGuardada.getPaciente().getCorreo() == null ||
-                citaGuardada.getPaciente().getCorreo().isEmpty()) {
-                System.out.println("ERROR: El paciente no tiene correo. No se envió correo.");
-                return;
-            }
-
-            String correoDestino = citaGuardada.getPaciente().getCorreo();
-            String asunto = "Confirmación de Cita Médica";
-            String cuerpo = "Su cita fue registrada con éxito.\n\n" +
-                    "Fecha: " + citaGuardada.getFecha() + "\n" +
-                    "Médico: " + citaGuardada.getMedico().getNombre() + "\n" +
-                    "Estado: " + citaGuardada.getEstado();
-
-            // Enviar correo
-            correosService.enviarCorreo(correoDestino, asunto, cuerpo, null);
-
-            System.out.println("Correo enviado correctamente al paciente: " + correoDestino);
-
-        } catch (Exception e) {
-            System.out.println("Error en guardarCitaYNotificar(): " + e.getMessage());
-            e.printStackTrace();
-        }
+        citasRepository.save(cita);
+        enviarCorreoConfirmacion(cita);
     }
 
-    // Eliminar cita
+    // Eliminar
     public void eliminar(Long id) {
         citasRepository.deleteById(id);
+    }
+
+    // Enviar correo
+    private void enviarCorreoConfirmacion(Citas cita) {
+        try {
+            String destinatario = cita.getPaciente().getCorreo();
+            String asunto = "Confirmación de cita médica";
+            String cuerpo = "Su cita ha sido registrada para el día: " + cita.getFecha();
+
+            correosService.enviarCorreo(destinatario, asunto, cuerpo, null);
+
+            System.out.println("Correo enviado correctamente a: " + destinatario);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error al enviar correo: " + e.getMessage());
+        }
     }
 }
