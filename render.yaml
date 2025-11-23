@@ -5,28 +5,29 @@ services:
     plan: free
     dockerfilePath: ./Dockerfile
     envVars:
-      # === Conexión a base de datos Supabase ===
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require
+        value: "jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require"
+
       - key: SPRING_DATASOURCE_USERNAME
-        value: postgres.svyjkqhehlcblhukyjqi
+        value: "postgres.svyjkqhehlcblhukyjqi"
+
       - key: SPRING_DATASOURCE_PASSWORD
         value: "Jb2q*3UBQ-GHRjg"
 
-      # === JPA ===
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
-        value: update
+        value: "update"
+
       - key: SPRING_JPA_SHOW_SQL
         value: "true"
 
-      # === POSTMARK ===
       - key: POSTMARK_API_KEY
-        value: 828579bb-0140-4f19-b6db-882de45ac8f4
-      - key: POSTMARK_FROM_EMAIL
-        value: david.chavezgu@usil.pe
+        value: "828579bb-0140-4f19-b6db-882de45ac8f4"
 
-      # === General ===
-      - key: SERVER_PORT
+      - key: POSTMARK_FROM_EMAIL
+        value: "david.chavezgu@usil.pe"
+
+      - key: PORT
         value: "8080"
+
       - key: JAVA_OPTS
         value: "-Xmx384m -Xms128m"
