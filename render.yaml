@@ -11,7 +11,7 @@ services:
       - key: SPRING_DATASOURCE_USERNAME
         value: postgres.svyjkqhehlcblhukyjqi
       - key: SPRING_DATASOURCE_PASSWORD
-        value: Jb2q*3UBQ-GHRjg
+        value: "Jb2q*3UBQ-GHRjg"
 
       # === JPA ===
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
