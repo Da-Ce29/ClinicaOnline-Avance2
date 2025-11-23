@@ -4,6 +4,7 @@ import com.ClinicaOnline.TF_grupo6.Entitys.Pacientes;
 import com.ClinicaOnline.TF_grupo6.Entitys.Citas;
 import com.ClinicaOnline.TF_grupo6.Entitys.Medicos;
 import com.ClinicaOnline.TF_grupo6.Repositorys.MedicosRepository;
+import com.ClinicaOnline.TF_grupo6.Repositorys.PacientesRepository;
 import com.ClinicaOnline.TF_grupo6.Services.CitasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,9 @@ public class CitasController {
     @Autowired
     private MedicosRepository medicosRepository;
 
+    @Autowired
+    private PacientesRepository pacientesRepository;
+
     // LISTAR TODAS LAS CITAS
     @GetMapping
     public String listarCitas(Model model) {
@@ -31,7 +35,7 @@ public class CitasController {
     @GetMapping("/nueva")
     public String mostrarFormularioNuevaCita(Model model) {
         Citas nuevaCita = new Citas();
-        nuevaCita.setPaciente(new Pacientes()); // evita NullPointer
+        nuevaCita.setPaciente(new Pacientes());
         model.addAttribute("cita", nuevaCita);
         model.addAttribute("medicos", medicosRepository.findAll());
         return "nueva_cita";
@@ -50,21 +54,26 @@ public class CitasController {
             @RequestParam("medico") Long medicoId
     ) {
         try {
+            // Asignar médico
             Medicos medico = medicosRepository.findById(medicoId)
                     .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
-
             cita.setMedico(medico);
 
-            // evitar NullPointer
-            if (cita.getPaciente() == null) {
-                cita.setPaciente(new Pacientes());
-            }
-
-            if (cita.getPaciente().getCorreo() == null ||
-                cita.getPaciente().getCorreo().isEmpty()) {
+            // Validar paciente
+            Pacientes paciente = cita.getPaciente();
+            if (paciente.getCorreo() == null || paciente.getCorreo().isEmpty()) {
                 return "redirect:/citas?nopaciente";
             }
 
+            // Guardar paciente primero si es nuevo
+            if (paciente.getId() == null) {
+                paciente = pacientesRepository.save(paciente);
+            }
+
+            // Asignar paciente a la cita
+            cita.setPaciente(paciente);
+
+            // Guardar cita
             citasService.guardarCitaYNotificar(cita);
             return "redirect:/citas?exito";
 
