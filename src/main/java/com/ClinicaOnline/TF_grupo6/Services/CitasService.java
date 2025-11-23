@@ -1,6 +1,7 @@
 package com.ClinicaOnline.TF_grupo6.Services;
 
 import com.ClinicaOnline.TF_grupo6.Entitys.Citas;
+import com.ClinicaOnline.TF_grupo6.Entitys.Pacientes;
 import com.ClinicaOnline.TF_grupo6.Repositorys.PacientesRepository;
 import com.ClinicaOnline.TF_grupo6.Repositorys.CitasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class CitasService {
 
     @Autowired
     private PacientesRepository pacientesRepository;
-    
+
     // Listar todas
     public Iterable<Citas> listarTodas() {
         return citasRepository.findAll();
@@ -26,32 +27,24 @@ public class CitasService {
     // Guardar cita y enviar correo
     public void guardarCitaYNotificar(Citas cita) {
 
-    Pacientes p = cita.getPaciente();
+        Pacientes paciente = cita.getPaciente();
 
-    // Si el paciente no tiene ID, se crea uno nuevo
-    if (p.getId() == null) {
-        pacientesRepository.save(p);
-    } else {
-        // Si viene con ID (editar o reusar), cargarlo de la BD
-        p = pacientesRepository.findById(p.getId())
-            .orElseThrow(() ->
-                new IllegalArgumentException("Paciente no encontrado")
-            );
-        cita.setPaciente(p);
-    }
+        // Si el paciente es nuevo, lo guardamos
+        if (paciente.getId() == null) {
+            paciente = pacientesRepository.save(paciente);
+            cita.setPaciente(paciente);
+        } else {
+            // Si existe, lo obtenemos desde la BD
+            paciente = pacientesRepository.findById(paciente.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));
+            cita.setPaciente(paciente);
+        }
 
-    // Guardar la cita
-    citasRepository.save(cita);
+        // Guardar cita
+        citasRepository.save(cita);
 
-    // Enviar correo
-    enviarCorreoConfirmacion(cita);
-}
-
-    // Guardar la cita
-    citasRepository.save(cita);
-
-    // Enviar correo
-    enviarCorreoConfirmacion(cita);
+        // Enviar correo
+        enviarCorreoConfirmacion(cita);
     }
 
     // Eliminar
