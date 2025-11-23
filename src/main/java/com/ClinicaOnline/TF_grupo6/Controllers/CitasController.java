@@ -4,7 +4,6 @@ import com.ClinicaOnline.TF_grupo6.Entitys.Pacientes;
 import com.ClinicaOnline.TF_grupo6.Entitys.Citas;
 import com.ClinicaOnline.TF_grupo6.Entitys.Medicos;
 import com.ClinicaOnline.TF_grupo6.Repositorys.MedicosRepository;
-import com.ClinicaOnline.TF_grupo6.Repositorys.PacientesRepository;
 import com.ClinicaOnline.TF_grupo6.Services.CitasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,9 +19,6 @@ public class CitasController {
 
     @Autowired
     private MedicosRepository medicosRepository;
-
-    @Autowired
-    private PacientesRepository pacientesRepository;
 
     // LISTAR TODAS LAS CITAS
     @GetMapping
@@ -41,7 +37,6 @@ public class CitasController {
         return "nueva_cita";
     }
 
-    // PREVENIR ERROR DE GET /guardar
     @GetMapping("/guardar")
     public String redirigirDesdeGet() {
         return "redirect:/citas/nueva";
@@ -59,22 +54,15 @@ public class CitasController {
                     .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
             cita.setMedico(medico);
 
-            // Validar paciente
-            Pacientes paciente = cita.getPaciente();
-            if (paciente.getCorreo() == null || paciente.getCorreo().isEmpty()) {
+            // Validación mínima
+            if (cita.getPaciente().getCorreo() == null ||
+                cita.getPaciente().getCorreo().isEmpty()) {
                 return "redirect:/citas?nopaciente";
             }
 
-            // Guardar paciente primero si es nuevo
-            if (paciente.getId() == null) {
-                paciente = pacientesRepository.save(paciente);
-            }
-
-            // Asignar paciente a la cita
-            cita.setPaciente(paciente);
-
-            // Guardar cita
+            // Guardar y notificar
             citasService.guardarCitaYNotificar(cita);
+
             return "redirect:/citas?exito";
 
         } catch (Exception e) {
@@ -90,3 +78,4 @@ public class CitasController {
         return "redirect:/citas";
     }
 }
+
