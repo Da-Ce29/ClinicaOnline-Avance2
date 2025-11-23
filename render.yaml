@@ -19,19 +19,11 @@ services:
       - key: SPRING_JPA_SHOW_SQL
         value: "true"
 
-      # === SMTP ===
-      - key: SPRING_MAIL_HOST
-        value: smtp.gmail.com
-      - key: SPRING_MAIL_PORT
-        value: "587"
-      - key: SPRING_MAIL_USERNAME
-        value: davidechg2965@gmail.com
-      - key: SPRING_MAIL_PASSWORD
-        value: yzcbpfwpymwhggcw
-      - key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH
-        value: "true"
-      - key: SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE
-        value: "true"
+      # === POSTMARK ===
+      - key: POSTMARK_API_KEY
+        value: 828579bb-0140-4f19-b6db-882de45ac8f4
+      - key: POSTMARK_FROM_EMAIL
+        value: david.chavezgu@usil.pe
 
       # === General ===
       - key: SERVER_PORT
