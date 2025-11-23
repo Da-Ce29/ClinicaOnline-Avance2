@@ -12,10 +12,10 @@ import java.util.Properties;
 @Service
 public class CorreosService {
 
-    @Value("${SPRING_MAIL_USERNAME}")
+    @Value("${spring.mail.username}")
     private String remitente;
 
-    @Value("${SPRING_MAIL_PASSWORD}")
+    @Value("${spring.mail.password}")
     private String contrasena;
 
     public void enviarCorreo(String destinatario, String asunto, String cuerpo, String imagenRuta) {
@@ -40,7 +40,7 @@ public class CorreosService {
 
             String html = "<html><body>"
                     + "<h3>" + cuerpo + "</h3>"
-                    + "<img src='cid:imagen_embebida' />"
+                    + (imagenRuta != null ? "<img src='cid:imagen_embebida' />" : "")
                     + "</body></html>";
 
             MimeBodyPart htmlParte = new MimeBodyPart();
@@ -49,6 +49,7 @@ public class CorreosService {
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(htmlParte);
 
+            // Adjuntar imagen si existe
             if (imagenRuta != null) {
                 File imagen = new File(imagenRuta);
                 if (imagen.exists()) {
