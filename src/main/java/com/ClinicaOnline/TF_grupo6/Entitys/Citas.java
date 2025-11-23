@@ -2,7 +2,6 @@ package com.ClinicaOnline.TF_grupo6.Entitys;
 
 import javax.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 
 @Entity
@@ -27,10 +26,12 @@ public class Citas {
     private String estado = "Pendiente";
 
     public Citas() {
-    this.paciente = new Pacientes(); // evita NullPointer al bind con Thymeleaf
+        // evita NullPointer al hacer binding desde Thymeleaf
+        this.paciente = new Pacientes();
     }
 
-    // Getters y Setters
+    // GETTERS Y SETTERS
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -46,4 +47,3 @@ public class Citas {
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
 }
-
