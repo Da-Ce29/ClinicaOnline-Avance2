@@ -19,31 +19,53 @@ public class CitasService {
     @Autowired
     private PacientesRepository pacientesRepository;
 
+    // Listar todas las citas
     public Iterable<Citas> listarTodas() {
         return citasRepository.findAll();
     }
 
-    public void guardarCitaYNotificar(Citas cita) {
-    Pacientes p = cita.getPaciente();
-    if (p != null) {
-        if (p.getId() == null) {
-            // Validar si el correo ya existe
-            if (pacientesRepository.existsByCorreo(p.getCorreo())) {
-                // Recuperar el paciente existente
-                p = pacientesRepository.findByCorreo(p.getCorreo());
+    // Guardar cita y notificar
+    public void guardarCitaYNotificar(Citas cita) throws IllegalArgumentException {
+        Pacientes p = cita.getPaciente();
+
+        if (p != null) {
+            if (p.getId() == null) {
+                // Validar si el correo ya existe
+                if (pacientesRepository.existsByCorreo(p.getCorreo())) {
+                    // Recuperar paciente existente
+                    p = pacientesRepository.findByCorreo(p.getCorreo());
+                } else {
+                    // Crear paciente nuevo
+                    p = pacientesRepository.save(p);
+                }
             } else {
-                // Crear paciente nuevo
-                p = pacientesRepository.save(p);
+                p = pacientesRepository.findById(p.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));
             }
-        } else {
-            p = pacientesRepository.findById(p.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));
+            cita.setPaciente(p);
         }
-        cita.setPaciente(p);
+
+        // Guardar cita
+        citasRepository.save(cita);
+
+        // Enviar correo de confirmación
+        enviarCorreoConfirmacion(cita);
     }
 
-    citasRepository.save(cita);
-    enviarCorreoConfirmacion(cita);
+    // Eliminar cita
+    public void eliminar(Long id) {
+        citasRepository.deleteById(id);
     }
 
+    // Enviar correo de confirmación (privado)
+    private void enviarCorreoConfirmacion(Citas cita) {
+        try {
+            String destinatario = cita.getPaciente().getCorreo();
+            String asunto = "Confirmación de cita médica";
+            String cuerpo = "Su cita ha sido registrada para el día: " + cita.getFecha();
+            correosService.enviarCorreo(destinatario, asunto, cuerpo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
