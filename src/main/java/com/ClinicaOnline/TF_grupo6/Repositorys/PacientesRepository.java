@@ -7,4 +7,3 @@ public interface PacientesRepository extends JpaRepository<Pacientes, Long> {
   boolean existsByCorreo(String correo);        // Para validar existencia
   Pacientes findByCorreo(String correo);       // Para recuperar paciente existente
 }
-}
