@@ -24,31 +24,26 @@ public class CitasService {
     }
 
     public void guardarCitaYNotificar(Citas cita) {
-        Pacientes p = cita.getPaciente();
-        if (p != null) {
-            if (p.getId() == null) {
-                p = pacientesRepository.save(p); // crea paciente nuevo
+    Pacientes p = cita.getPaciente();
+    if (p != null) {
+        if (p.getId() == null) {
+            // Validar si el correo ya existe
+            if (pacientesRepository.existsByCorreo(p.getCorreo())) {
+                // Recuperar el paciente existente
+                p = pacientesRepository.findByCorreo(p.getCorreo());
             } else {
-                p = pacientesRepository.findById(p.getId()).orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));
+                // Crear paciente nuevo
+                p = pacientesRepository.save(p);
             }
-            cita.setPaciente(p);
+        } else {
+            p = pacientesRepository.findById(p.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));
         }
-        citasRepository.save(cita);
-        enviarCorreoConfirmacion(cita);
+        cita.setPaciente(p);
     }
 
-    public void eliminar(Long id) {
-        citasRepository.deleteById(id);
+    citasRepository.save(cita);
+    enviarCorreoConfirmacion(cita);
     }
 
-    private void enviarCorreoConfirmacion(Citas cita) {
-        try {
-            String destinatario = cita.getPaciente().getCorreo();
-            String asunto = "Confirmación de cita médica";
-            String cuerpo = "Su cita ha sido registrada para el día: " + cita.getFecha();
-            correosService.enviarCorreo(destinatario, asunto, cuerpo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
