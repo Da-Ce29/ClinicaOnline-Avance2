@@ -3,6 +3,7 @@ package com.ClinicaOnline.TF_grupo6.Services;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +18,8 @@ public class CorreosService {
         this.mailSender = mailSender;
     }
 
-    public void enviarCorreo(String destinatario, String asunto, String cuerpo) {
+    @Async
+    public void enviarCorreoAsync(String destinatario, String asunto, String cuerpo) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
@@ -26,7 +28,7 @@ public class CorreosService {
             message.setText(cuerpo);
 
             mailSender.send(message);
-            System.out.println("Correo enviado a " + destinatario);
+            System.out.println("Correo enviado a " + destinatario + " (Async)");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error enviando correo: " + e.getMessage());
